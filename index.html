@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Acc Liên Quân - Đăng tin bán acc</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            color: white;
+            padding: 1.5rem 0;
+            text-align: center;
+            border-bottom: 3px solid #fbbf24;
+            position: relative;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+        }
+        
+        .logo h1 i {
+            color: #fbbf24;
+            margin-right: 10px;
+        }
+
+        /* Auth Buttons */
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .auth-buttons button, .user-info button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .login-btn {
+            background-color: transparent;
+            border: 2px solid #fbbf24;
+            color: #fbbf24;
+        }
+
+        .login-btn:hover {
+            background-color: #fbbf24;
+            color: #0f172a;
+        }
+
+        .register-btn {
+            background-color: #fbbf24;
+            color: #0f172a;
+        }
+
+        .register-btn:hover {
+            background-color: #f59e0b;
+        }
+
+        .logout-btn {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .logout-btn:hover {
+            background-color: #dc2626;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info span {
+            color: #fbbf24;
+            font-weight: bold;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+        }
+
+        /* Nút đăng tin */
+        .post-account-btn {
+            background-color: #fbbf24;
+            color: #0f172a;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            margin-bottom: 30px;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .post-account-btn:hover {
+            background-color: #f59e0b;
+            transform: scale(1.05);
+        }
+
+        .post-account-btn:disabled {
+            background-color: #64748b;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Modal (form đăng nhập, đăng ký, đăng tin) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #1e293b;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid #fbbf24;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #94a3b8;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #fbbf24;
+        }
+
+        .modal h2 {
+            color: #fbbf24;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal input, .modal textarea, .modal select {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border: 1px solid #334155;
+            border-radius: 10px;
+            background-color: #0f172a;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .modal input:focus, .modal textarea:focus, .modal select:focus {
+            outline: none;
+            border-color: #fbbf24;
+        }
+
+        .modal textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal button[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #fbbf24;
+            color: #0f172a;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .modal button[type="submit"]:hover {
+            background-color: #f59e0b;
+        }
+
+        .switch-auth {
+            text-align: center;
+            margin-top: 15px;
+            color: #94a3b8;
+        }
+
+        .switch-auth span {
+            color: #fbbf24;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Lưới sản phẩm */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 3rem;
+        }
+
+        /* Card sản phẩm */
+        .product-card {
+            background-color: #1e293b;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            transition: transform 0.3s;
+            border: 1px solid #334155;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: #fbbf24;
+        }
+
+        .card-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .card-tag {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #ef4444;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .card-desc {
+            color: #94a3b8;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .account-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .account-stats span {
+            background-color: #2d3a4f;
+            padding: 5px 10px;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: #cbd5e1;
+        }
+
+        .account-stats i {
+            color: #fbbf24;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #334155;
+            padding-top: 15px;
+        }
+
+        .price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fbbf24;
+        }
+
+        .price small {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-weight: normal;
+        }
+
+        .buy-btn {
+            background-color: #fbbf24;
+            color: #0f172a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .buy-btn:hover {
+            background-color: #f59e0b;
+        }
+
+        /* Nút sửa/xóa cho chủ bài đăng */
+        .admin-actions {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            gap: 5px;
+            z-index: 10;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .edit-btn {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        /* Features */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .feature-item {
+            background-color: #1e293b;
+            padding: 30px 20px;
+            border-radius: 15px;
+            border: 1px solid #334155;
+        }
+
+        .feature-item i {
+            font-size: 2.5rem;
+            color: #fbbf24;
+            margin-bottom: 15px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #1e293b;
+            color: #94a3b8;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            border-top: 1px solid #334155;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .contact-info a {
+            color: #fbbf24;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+
+        .contact-info a:hover {
+            color: #f59e0b;
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <h1><i class="fas fa-gamepad"></i> Shop Acc Liên Quân</h1>
+            </div>
+            <div class="auth-buttons" id="authButtons">
+                <button class="login-btn" onclick="openModal('login')"><i class="fas fa-sign-in-alt"></i> Đăng nhập</button>
+                <button class="register-btn" onclick="openModal('register')"><i class="fas fa-user-plus"></i> Đăng ký</button>
+            </div>
+            <div class="user-info" id="userInfo" style="display: none;">
+                <span id="welcomeUser"></span>
+                <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Nút đăng tin (chỉ hiện khi đã đăng nhập) -->
+        <button class="post-account-btn" id="postAccountBtn" onclick="openModal('post')" disabled>
+            <i class="fas fa-plus-circle"></i> Đăng tin bán acc
+        </button>
+
+        <!-- Danh sách sản phẩm -->
+        <h2 style="margin-bottom: 20px; color: #fbbf24;">
+            <i class="fas fa-star"></i> Tài khoản đang bán
+        </h2>
+        <div class="product-grid" id="productList"></div>
+
+        <!-- Features -->
+        <div class="features">
+            <div class="feature-item">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Bảo hành trọn đời</h3>
+                <p>Hỗ trợ đổi trả nếu acc có vấn đề</p>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-bolt"></i>
+                <h3>Giao dịch nhanh</h3>
+                <p>Nhận acc ngay sau thanh toán</p>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-headset"></i>
+                <h3>Hỗ trợ 24/7</h3>
+                <p>Luôn có người trực</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="contact-info">
+            <a href="https://www.facebook.com/NHBC.2000" target="_blank">
+                <i class="fab fa-facebook"></i> Facebook
+            </a>
+            <a href="https://zalo.me/0999999999" target="_blank">
+                <i class="fab fa-zalo"></i> Zalo
+            </a>
+            <a href="tel:0999999999">
+                <i class="fas fa-phone-alt"></i> 0999.999.999
+            </a>
+            <a href="mailto:support@shopacc.com">
+                <i class="fas fa-envelope"></i> Email
+            </a>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2024 Shop Acc Liên Quân - Uy tín hàng đầu</p>
+        </div>
+    </footer>
+
+    <!-- MODAL ĐĂNG NHẬP / ĐĂNG KÝ / ĐĂNG TIN -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Đăng nhập</h2>
+            <form id="authForm">
+                <input type="text" id="username" placeholder="Tên đăng nhập" required>
+                <input type="password" id="password" placeholder="Mật khẩu" required>
+                <input type="password" id="confirmPassword" placeholder="Xác nhận mật khẩu" style="display: none;">
+                <button type="submit" id="modalSubmitBtn">Đăng nhập</button>
+            </form>
+            <div class="switch-auth" id="switchAuth">
+                <span id="switchText">Chưa có tài khoản? Đăng ký</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ĐĂNG TIN BÁN ACC -->
+    <div id="postModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('post')">&times;</span>
+            <h2>Đăng tin bán acc</h2>
+            <form id="postForm">
+                <input type="text" id="accTitle" placeholder="Tiêu đề (VD: Acc Thách Đấu 1500đ)" required>
+                <textarea id="accDesc" placeholder="Mô tả chi tiết..." required></textarea>
+                <input type="text" id="accRank" placeholder="Rank (VD: Thách Đấu 1500đ)" required>
+                <input type="number" id="accHeroes" placeholder="Số tướng" required>
+                <input type="number" id="accSkins" placeholder="Số skin" required>
+                <input type="number" id="accPrice" placeholder="Giá (VNĐ)" required>
+                <input type="text" id="accImage" placeholder="Link ảnh (URL)" required>
+                <input type="hidden" id="accId" value="">
+                <button type="submit" id="postSubmitBtn">Đăng tin</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ==================== DỮ LIỆU MẪU BAN ĐẦU ====================
+        let users = JSON.parse(localStorage.getItem('users')) || [
+            { username: 'admin', password: 'admin123' }
+        ];
+        
+        let accounts = JSON.parse(localStorage.getItem('accounts')) || [
+            {
+                id: 1,
+                title: 'Acc Thách Đấu 1500đ',
+                desc: 'Full tướng + full skin cao cấp',
+                rank: 'Thách Đấu 1500đ',
+                heroes: 350,
+                skins: 800,
+                price: 1200000,
+                image: 'https://via.placeholder.com/300x200/667eea/ffffff?text=Thach+Dau',
+                seller: 'admin'
+            },
+            {
+                id: 2,
+                title: 'Acc Cao Thủ 50đ',
+                desc: 'Nhiều tướng meta, skin event',
+                rank: 'Cao Thủ 50đ',
+                heroes: 120,
+                skins: 250,
+                price: 550000,
+                image: 'https://via.placeholder.com/300x200/f093fb/ffffff?text=Cao+Thu',
+                seller: 'admin'
+            }
+        ];
+
+        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+
+        // ==================== LƯU DỮ LIỆU ====================
+        function saveData() {
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('accounts', JSON.stringify(accounts));
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        }
+
+        // ==================== HIỂN THỊ SẢN PHẨM ====================
+        function displayAccounts() {
+            const productList = document.getElementById('productList');
+            if (!productList) return;
+
+            if (accounts.length === 0) {
+                productList.innerHTML = '<p style="text-align: center; color: #94a3b8;">Chưa có tài khoản nào được đăng bán.</p>';
+                return;
+            }
+
+            productList.innerHTML = accounts.map(acc => {
+                const isOwner = currentUser && currentUser.username === acc.seller;
+                return `
+                    <div class="product-card" data-id="${acc.id}">
+                        ${isOwner ? `
+                            <div class="admin-actions">
+                                <button class="edit-btn" onclick="editAccount(${acc.id})"><i class="fas fa-edit"></i> Sửa</button>
+                                <button class="delete-btn" onclick="deleteAccount(${acc.id})"><i class="fas fa-trash"></i> Xóa</button>
+                            </div>
+                        ` : ''}
+                        <div class="card-image" style="background-image: url('${acc.image}'); background-size: cover; background-position: center;"></div>
+                        <div class="card-content">
+                            <h3 class="card-title">${acc.title}</h3>
+                            <p class="card-desc">${acc.desc}</p>
+                            <div class="account-stats">
+                                <span><i class="fas fa-trophy"></i> ${acc.rank}</span>
+                                <span><i class="fas fa-skull"></i> ${acc.heroes}+ tướng</span>
+                                <span><i class="fas fa-palette"></i> ${acc.skins}+ skin</span>
+                            </div>
+                            <div class="card-footer">
+                                <span class="price">${acc.price.toLocaleString()}đ</span>
+                                <button class="buy-btn" onclick="window.open('https://zalo.me/0999999999', '_blank')">
+                                    <i class="fab fa-zalo"></i> Mua qua Zalo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==================== XỬ LÝ ĐĂNG NHẬP / ĐĂNG KÝ ====================
+        function openModal(type) {
+            document.getElementById('authModal').style.display = 'flex';
+            const modalTitle = document.getElementById('modalTitle');
+            const submitBtn = document.getElementById('modalSubmitBtn');
+            const confirmPass = document.getElementById('confirmPassword');
+            const switchText = document.getElementById('switchText');
+
+            if (type === 'login') {
+                modalTitle.textContent = 'Đăng nhập';
+                submitBtn.textContent = 'Đăng nhập';
+                confirmPass.style.display = 'none';
+                switchText.textContent = 'Chưa có tài khoản? Đăng ký';
+                document.getElementById('authForm').setAttribute('data-type', 'login');
+            } else if (type === 'register') {
+                modalTitle.textContent = 'Đăng ký';
+                submitBtn.textContent = 'Đăng ký';
+                confirmPass.style.display = 'block';
+                switchText.textContent = 'Đã có tài khoản? Đăng nhập';
+                document.getElementById('authForm').setAttribute('data-type', 'register');
+            } else if (type === 'post') {
+                document.getElementById('postModal').style.display = 'flex';
+                document.getElementById('postForm').reset();
+                document.getElementById('accId').value = '';
+                document.getElementById('postSubmitBtn').textContent = 'Đăng tin';
+            }
+        }
+
+        function closeModal(modal = 'auth') {
+            if (modal === 'auth') {
+                document.getElementById('authModal').style.display = 'none';
+            } else {
+                document.getElementById('postModal').style.display = 'none';
+            }
+        }
+
+        // Xử lý form đăng nhập/đăng ký
+        document.getElementById('authForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const type = this.getAttribute('data-type');
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+
+            if (type === 'register') {
+                if (password !== confirmPass) {
+                    alert('Mật khẩu xác nhận không khớp!');
+                    return;
+                }
+                if (users.find(u => u.username === username)) {
+                    alert('Tên đăng nhập đã tồn tại!');
+                    return;
+                }
+                users.push({ username, password });
+                alert('Đăng ký thành công! Vui lòng đăng nhập.');
+                openModal('login');
+            } else {
+                const user = users.find(u => u.username === username && u.password === password);
+                if (user) {
+                    currentUser = { username: user.username };
+                    saveData();
+                    updateAuthUI();
+                    closeModal('auth');
+                    alert('Đăng nhập thành công!');
+                } else {
+                    alert('Sai tên đăng nhập hoặc mật khẩu!');
+                }
+            }
+            this.reset();
+        });
+
+        // Chuyển đổi giữa đăng nhập và đăng ký
+        document.getElementById('switchText').addEventListener('click', function() {
+            const currentType = document.getElementById('authForm').getAttribute('data-type');
+            if (currentType === 'login') {
+                openModal('register');
+            } else {
+                openModal('login');
+            }
+        });
+
+        // Đăng xuất
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            updateAuthUI();
+            displayAccounts();
+        }
+
+        // Cập nhật giao diện theo trạng thái đăng nhập
+        function updateAuthUI() {
+            const authButtons = document.getElementById('authButtons');
+            const userInfo = document.getElementById('userInfo');
+            const postBtn = document.getElementById('postAccountBtn');
+
+            if (currentUser) {
+                authButtons.style.display = 'none';
+                userInfo.style.display = 'flex';
+                document.getElementById('welcomeUser').textContent = `Xin chào, ${currentUser.username}`;
+                postBtn.disabled = false;
+            } else {
+                authButtons.style.display = 'flex';
+                userInfo.style.display = 'none';
+                postBtn.disabled = true;
+            }
+        }
+
+        // ==================== XỬ LÝ ĐĂNG TIN BÁN ACC ====================
+        document.getElementById('postForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (!currentUser) {
+                alert('Vui lòng đăng nhập để đăng tin!');
+                closeModal('post');
+                return;
+            }
+
+            const id = document.getElementById('accId').value;
+            const accountData = {
+                title: document.getElementById('accTitle').value,
+                desc: document.getElementById('accDesc').value,
+                rank: document.getElementById('accRank').value,
+                heroes: parseInt(document.getElementById('accHeroes').value),
+                skins: parseInt(document.getElementById('accSkins').value),
+                price: parseInt(document.getElementById('accPrice').value),
+                image: document.getElementById('accImage').value,
+                seller: currentUser.username
+            };
+
+            if (id) {
+                // Sửa tin
+                const index = accounts.findIndex(a => a.id == id && a.seller === currentUser.username);
+                if (index !== -1) {
+                    accounts[index] = { ...accounts[index], ...accountData };
+                    alert('Cập nhật tin thành công!');
+                }
+            } else {
+                // Đăng tin mới
+                accountData.id = Date.now();
+                accounts.push(accountData);
+                alert('Đăng tin thành công!');
+            }
+
+            saveData();
+            displayAccounts();
+            closeModal('post');
+            this.reset();
+        });
+
+        // Sửa tin
+        function editAccount(id) {
+            if (!currentUser) return;
+            const account = accounts.find(a => a.id == id && a.seller === currentUser.username);
+            if (!account) return;
+
+            document.getElementById('accId').value = account.id;
+            document.getElementById('accTitle').value = account.title;
+            document.getElementById('accDesc').value = account.desc;
+            document.getElementById('accRank').value = account.rank;
+            document.getElementById('accHeroes').value = account.heroes;
+            document.getElementById('accSkins').value = account.skins;
+            document.getElementById('accPrice').value = account.price;
+            document.getElementById('accImage').value = account.image;
+            document.getElementById('postSubmitBtn').textContent = 'Cập nhật';
+            
+            openModal('post');
+        }
+
+        // Xóa tin
+        function deleteAccount(id) {
+            if (!currentUser) return;
+            if (!confirm('Bạn có chắc muốn xóa tài khoản này?')) return;
+            
+            accounts = accounts.filter(a => !(a.id == id && a.seller === currentUser.username));
+            saveData();
+            displayAccounts();
+        }
+
+        // ==================== KHỞI TẠO TRANG ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            saveData(); // Lưu dữ liệu mẫu
+            updateAuthUI();
+            displayAccounts();
+        });
+
+        // Đóng modal khi click bên ngoài
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
