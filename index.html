@@ -7,6 +7,7 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* Giữ nguyên phần style cũ */
         * {
             margin: 0;
             padding: 0;
@@ -258,7 +259,7 @@
         }
 
         .card-image {
-            height: 250px; /* Tăng chiều cao ảnh lên */
+            height: 250px;
             background-size: cover;
             background-position: center;
             position: relative;
@@ -377,7 +378,7 @@
             transform: scale(1.05);
         }
 
-        /* Nút sửa/xóa cho chủ bài đăng */
+        /* Nút sửa/xóa cho admin */
         .admin-actions {
             position: absolute;
             top: 10px;
@@ -474,6 +475,17 @@
                 justify-content: space-between;
             }
         }
+
+        /* Badge Admin */
+        .admin-badge {
+            background-color: #fbbf24;
+            color: #0f172a;
+            padding: 2px 8px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 5px;
+        }
     </style>
 </head>
 <body>
@@ -495,8 +507,8 @@
     </header>
 
     <div class="container">
-        <!-- Nút đăng tin (chỉ hiện khi đã đăng nhập) -->
-        <button class="post-account-btn" id="postAccountBtn" onclick="openModal('post')" disabled>
+        <!-- Nút đăng tin (chỉ hiện khi là admin) -->
+        <button class="post-account-btn" id="postAccountBtn" onclick="openModal('post')" style="display: none;">
             <i class="fas fa-plus-circle"></i> Đăng tin bán acc
         </button>
 
@@ -546,7 +558,7 @@
         </div>
     </footer>
 
-    <!-- MODAL ĐĂNG NHẬP / ĐĂNG KÝ / ĐĂNG TIN -->
+    <!-- MODAL ĐĂNG NHẬP / ĐĂNG KÝ -->
     <div id="authModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -563,7 +575,7 @@
         </div>
     </div>
 
-    <!-- MODAL ĐĂNG TIN BÁN ACC -->
+    <!-- MODAL ĐĂNG TIN BÁN ACC (CHỈ ADMIN) -->
     <div id="postModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('post')">&times;</span>
@@ -585,7 +597,7 @@
     <script>
         // ==================== DỮ LIỆU MẪU BAN ĐẦU ====================
         let users = JSON.parse(localStorage.getItem('users')) || [
-            { username: 'admin', password: 'admin123' }
+            { username: 'admin', password: 'admin123', role: 'admin' }
         ];
         
         let accounts = JSON.parse(localStorage.getItem('accounts')) || [
@@ -622,6 +634,11 @@
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
         }
 
+        // ==================== KIỂM TRA ADMIN ====================
+        function isAdmin() {
+            return currentUser && currentUser.role === 'admin';
+        }
+
         // ==================== HIỂN THỊ SẢN PHẨM ====================
         function displayAccounts() {
             const productList = document.getElementById('productList');
@@ -633,10 +650,12 @@
             }
 
             productList.innerHTML = accounts.map(acc => {
-                const isOwner = currentUser && currentUser.username === acc.seller;
+                // Chỉ admin mới thấy nút sửa/xóa
+                const showAdminActions = isAdmin();
+                
                 return `
                     <div class="product-card" data-id="${acc.id}">
-                        ${isOwner ? `
+                        ${showAdminActions ? `
                             <div class="admin-actions">
                                 <button class="edit-btn" onclick="editAccount(${acc.id})"><i class="fas fa-edit"></i> Sửa</button>
                                 <button class="delete-btn" onclick="deleteAccount(${acc.id})"><i class="fas fa-trash"></i> Xóa</button>
@@ -670,6 +689,18 @@
 
         // ==================== XỬ LÝ ĐĂNG NHẬP / ĐĂNG KÝ ====================
         function openModal(type) {
+            if (type === 'post') {
+                if (!isAdmin()) {
+                    alert('Chỉ admin mới có quyền đăng tin!');
+                    return;
+                }
+                document.getElementById('postModal').style.display = 'flex';
+                document.getElementById('postForm').reset();
+                document.getElementById('accId').value = '';
+                document.getElementById('postSubmitBtn').textContent = 'Đăng tin';
+                return;
+            }
+
             document.getElementById('authModal').style.display = 'flex';
             const modalTitle = document.getElementById('modalTitle');
             const submitBtn = document.getElementById('modalSubmitBtn');
@@ -688,11 +719,6 @@
                 confirmPass.style.display = 'block';
                 switchText.textContent = 'Đã có tài khoản? Đăng nhập';
                 document.getElementById('authForm').setAttribute('data-type', 'register');
-            } else if (type === 'post') {
-                document.getElementById('postModal').style.display = 'flex';
-                document.getElementById('postForm').reset();
-                document.getElementById('accId').value = '';
-                document.getElementById('postSubmitBtn').textContent = 'Đăng tin';
             }
         }
 
@@ -721,17 +747,18 @@
                     alert('Tên đăng nhập đã tồn tại!');
                     return;
                 }
-                users.push({ username, password });
+                // Tài khoản mới đăng ký không phải admin
+                users.push({ username, password, role: 'user' });
                 alert('Đăng ký thành công! Vui lòng đăng nhập.');
                 openModal('login');
             } else {
                 const user = users.find(u => u.username === username && u.password === password);
                 if (user) {
-                    currentUser = { username: user.username };
+                    currentUser = { username: user.username, role: user.role || 'user' };
                     saveData();
                     updateAuthUI();
                     closeModal('auth');
-                    alert('Đăng nhập thành công!');
+                    alert(`Đăng nhập thành công! ${user.role === 'admin' ? '(Admin)' : ''}`);
                 } else {
                     alert('Sai tên đăng nhập hoặc mật khẩu!');
                 }
@@ -766,21 +793,27 @@
             if (currentUser) {
                 authButtons.style.display = 'none';
                 userInfo.style.display = 'flex';
-                document.getElementById('welcomeUser').textContent = `Xin chào, ${currentUser.username}`;
-                postBtn.disabled = false;
+                document.getElementById('welcomeUser').innerHTML = `Xin chào, ${currentUser.username}${currentUser.role === 'admin' ? ' <span class="admin-badge">Admin</span>' : ''}`;
+                
+                // Chỉ admin mới thấy nút đăng tin
+                if (currentUser.role === 'admin') {
+                    postBtn.style.display = 'inline-flex';
+                } else {
+                    postBtn.style.display = 'none';
+                }
             } else {
                 authButtons.style.display = 'flex';
                 userInfo.style.display = 'none';
-                postBtn.disabled = true;
+                postBtn.style.display = 'none';
             }
         }
 
-        // ==================== XỬ LÝ ĐĂNG TIN BÁN ACC ====================
+        // ==================== XỬ LÝ ĐĂNG TIN BÁN ACC (CHỦ ADMIN) ====================
         document.getElementById('postForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            if (!currentUser) {
-                alert('Vui lòng đăng nhập để đăng tin!');
+            if (!isAdmin()) {
+                alert('Chỉ admin mới có quyền đăng tin!');
                 closeModal('post');
                 return;
             }
@@ -794,14 +827,14 @@
                 skins: parseInt(document.getElementById('accSkins').value),
                 price: parseInt(document.getElementById('accPrice').value),
                 image: document.getElementById('accImage').value,
-                seller: currentUser.username
+                seller: 'admin'
             };
 
             if (id) {
                 // Sửa tin
-                const index = accounts.findIndex(a => a.id == id && a.seller === currentUser.username);
+                const index = accounts.findIndex(a => a.id == id);
                 if (index !== -1) {
-                    accounts[index] = { ...accounts[index], ...accountData };
+                    accounts[index] = { ...accounts[index], ...accountData, id: parseInt(id) };
                     alert('Cập nhật tin thành công!');
                 }
             } else {
@@ -817,10 +850,14 @@
             this.reset();
         });
 
-        // Sửa tin
+        // Sửa tin (chỉ admin)
         function editAccount(id) {
-            if (!currentUser) return;
-            const account = accounts.find(a => a.id == id && a.seller === currentUser.username);
+            if (!isAdmin()) {
+                alert('Chỉ admin mới có quyền sửa tin!');
+                return;
+            }
+            
+            const account = accounts.find(a => a.id == id);
             if (!account) return;
 
             document.getElementById('accId').value = account.id;
@@ -836,12 +873,16 @@
             openModal('post');
         }
 
-        // Xóa tin
+        // Xóa tin (chỉ admin)
         function deleteAccount(id) {
-            if (!currentUser) return;
+            if (!isAdmin()) {
+                alert('Chỉ admin mới có quyền xóa tin!');
+                return;
+            }
+            
             if (!confirm('Bạn có chắc muốn xóa tài khoản này?')) return;
             
-            accounts = accounts.filter(a => !(a.id == id && a.seller === currentUser.username));
+            accounts = accounts.filter(a => a.id != id);
             saveData();
             displayAccounts();
         }
