@@ -106,7 +106,7 @@
 
         /* Container */
         .container {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 2rem auto;
             padding: 0 20px;
         }
@@ -236,8 +236,8 @@
         /* Lưới sản phẩm */
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
             margin-bottom: 3rem;
         }
 
@@ -258,7 +258,7 @@
         }
 
         .card-image {
-            height: 200px;
+            height: 250px; /* Tăng chiều cao ảnh lên */
             background-size: cover;
             background-position: center;
             position: relative;
@@ -274,6 +274,7 @@
             border-radius: 50px;
             font-weight: bold;
             font-size: 0.8rem;
+            z-index: 2;
         }
 
         .card-content {
@@ -290,20 +291,21 @@
         .card-desc {
             color: #94a3b8;
             margin-bottom: 15px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            min-height: 60px;
         }
 
         .account-stats {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             font-size: 0.9rem;
         }
 
         .account-stats span {
             background-color: #2d3a4f;
-            padding: 5px 10px;
+            padding: 5px 12px;
             border-radius: 50px;
             display: inline-flex;
             align-items: center;
@@ -321,10 +323,12 @@
             align-items: center;
             border-top: 1px solid #334155;
             padding-top: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .price {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 700;
             color: #fbbf24;
         }
@@ -335,11 +339,14 @@
             font-weight: normal;
         }
 
+        .contact-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
         .buy-btn {
-            background-color: #fbbf24;
-            color: #0f172a;
             border: none;
-            padding: 10px 20px;
+            padding: 10px 15px;
             border-radius: 50px;
             font-weight: bold;
             cursor: pointer;
@@ -347,10 +354,27 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 0.9rem;
         }
 
-        .buy-btn:hover {
-            background-color: #f59e0b;
+        .btn-zalo {
+            background-color: #0068ff;
+            color: white;
+        }
+
+        .btn-zalo:hover {
+            background-color: #0052c7;
+            transform: scale(1.05);
+        }
+
+        .btn-facebook {
+            background-color: #0866ff;
+            color: white;
+        }
+
+        .btn-facebook:hover {
+            background-color: #0652c0;
+            transform: scale(1.05);
         }
 
         /* Nút sửa/xóa cho chủ bài đăng */
@@ -435,6 +459,21 @@
             color: #f59e0b;
             transform: translateY(-3px);
         }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+            .card-footer {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .contact-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
     </style>
 </head>
 <body>
@@ -489,7 +528,7 @@
 
     <footer>
         <div class="contact-info">
-            <a href="https://www.facebook.com/NHBC.2000" target="_blank">
+            <a href="https://www.facebook.com/100075016752814" target="_blank">
                 <i class="fab fa-facebook"></i> Facebook
             </a>
             <a href="https://zalo.me/0999999999" target="_blank">
@@ -553,23 +592,23 @@
             {
                 id: 1,
                 title: 'Acc Thách Đấu 1500đ',
-                desc: 'Full tướng + full skin cao cấp',
+                desc: 'Full tướng + full skin cao cấp, bộ sưu tập đồ sộ',
                 rank: 'Thách Đấu 1500đ',
                 heroes: 350,
                 skins: 800,
                 price: 1200000,
-                image: 'https://via.placeholder.com/300x200/667eea/ffffff?text=Thach+Dau',
+                image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=600',
                 seller: 'admin'
             },
             {
                 id: 2,
                 title: 'Acc Cao Thủ 50đ',
-                desc: 'Nhiều tướng meta, skin event',
+                desc: 'Nhiều tướng meta, skin event mới nhất',
                 rank: 'Cao Thủ 50đ',
                 heroes: 120,
                 skins: 250,
                 price: 550000,
-                image: 'https://via.placeholder.com/300x200/f093fb/ffffff?text=Cao+Thu',
+                image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600',
                 seller: 'admin'
             }
         ];
@@ -614,9 +653,14 @@
                             </div>
                             <div class="card-footer">
                                 <span class="price">${acc.price.toLocaleString()}đ</span>
-                                <button class="buy-btn" onclick="window.open('https://zalo.me/0999999999', '_blank')">
-                                    <i class="fab fa-zalo"></i> Mua qua Zalo
-                                </button>
+                                <div class="contact-buttons">
+                                    <button class="buy-btn btn-facebook" onclick="window.open('https://www.facebook.com/100075016752814', '_blank')">
+                                        <i class="fab fa-facebook-messenger"></i> Facebook
+                                    </button>
+                                    <button class="buy-btn btn-zalo" onclick="window.open('https://zalo.me/0999999999', '_blank')">
+                                        <i class="fab fa-zalo"></i> Zalo
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -804,7 +848,7 @@
 
         // ==================== KHỞI TẠO TRANG ====================
         document.addEventListener('DOMContentLoaded', function() {
-            saveData(); // Lưu dữ liệu mẫu
+            saveData();
             updateAuthUI();
             displayAccounts();
         });
